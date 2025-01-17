@@ -17,6 +17,8 @@ export const jobs = s.sqliteTable("jobs", {
   url: s.text().notNull().unique(),
   title: s.text().notNull(),
   description: s.text(),
+  ai_summary: s.text(),
+  ai_summary_vector: s.text({ mode: "json" }).$type<Array<number>>(),
 });
 
 export const jobsRelations = relations(jobs, ({ many }) => ({

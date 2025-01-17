@@ -29,6 +29,13 @@
       "when": 1737148603309,
       "tag": "0003_burly_captain_universe",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1737149911487,
+      "tag": "0004_brainy_namorita",
+      "breakpoints": true
     }
   ]
 }
