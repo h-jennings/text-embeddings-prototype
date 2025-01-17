@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { ANDURIL_TEST_JD, JOB_FUNCTIONS } from "./data";
+import { ANDURIL_TEST_JD, JOB_FUNCTIONS, MARKON_JD, PRIMER_AI_JD, VANTA_PARTNERS_JD } from "./data";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -19,7 +19,7 @@ async function getJobFunctionTags(jobDescription: string) {
     .filter(([, vector]) => {
       const score = cosineSimilarity(jobDescriptionEmbedding, vector);
 
-      return score > 0.32;
+      return score > 0.34;
     })
     .map(([key]) => key);
 }
@@ -46,6 +46,6 @@ function dot(a: number[], b: number[]): number {
 }
 
 // Run program
-getJobFunctionTags(ANDURIL_TEST_JD).then((tags) => {
+getJobFunctionTags(MARKON_JD).then((tags) => {
   console.log(tags);
 });
