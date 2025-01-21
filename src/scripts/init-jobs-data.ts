@@ -7,12 +7,6 @@ import pLimit from "p-limit";
 // 3. Compare with tag table vectors
 // 4. Add tags to job
 
-interface Job {
-  id: string;
-  title: string;
-  description: string;
-}
-
 const GreenhouseJobsResponseSchema = z.object({
   jobs: z.array(
     z.object({
@@ -88,6 +82,11 @@ const PLATFORM_COMPANY_MAPPINGS: Record<Platform, Set<string>> = {
   ]),
 };
 
+interface Job {
+  externalJobId: string;
+  title: string;
+  description: string;
+}
 export async function getJobs() {
   const limit = pLimit(5); // Maximum number of concurrent requests
   const results: Job[] = [];
@@ -121,7 +120,7 @@ export async function getJobs() {
   return results;
 }
 
-async function fetchJobs(platform: Platform, companyId: string) {
+async function fetchJobs(platform: Platform, companyId: string): Promise<Array<Job>> {
   try {
     switch (platform) {
       case "greenhouse": {
@@ -138,7 +137,7 @@ async function fetchJobs(platform: Platform, companyId: string) {
 
         return parsed.jobs.map((job) => {
           return {
-            id: job.id.toString(),
+            externalJobId: job.id.toString(),
             title: job.title,
             description: he.decode(job.content),
           };
@@ -158,7 +157,7 @@ async function fetchJobs(platform: Platform, companyId: string) {
 
         return parsed.map((job) => {
           return {
-            id: job.id,
+            externalJobId: job.id,
             title: job.text,
             description: job.descriptionPlain + "\n" + job.additionalPlain,
           };
