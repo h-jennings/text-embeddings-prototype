@@ -19,6 +19,7 @@ export const companies = s.sqliteTable("companies", {
     .notNull()
     .references(() => platforms.id),
 });
+export type NewCompany = typeof companies.$inferInsert;
 
 export const companiesRelations = relations(companies, ({ many, one }) => ({
   jobs: many(jobs),

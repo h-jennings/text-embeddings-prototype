@@ -21,6 +21,49 @@ export async function savePlatformsData() {
   }
 }
 
+export async function saveCompaniesData() {
+  const platformsMap = await db
+    .select()
+    .from(schema.platforms)
+    .execute()
+    .then((platforms) => {
+      return platforms.reduce(
+        (map, platform) => {
+          map[platform.name] = platform.id;
+          return map;
+        },
+        {} as Record<string, number>,
+      );
+    });
+
+  const companies: Array<schema.NewCompany> = [];
+  for (const [platformName, companyIds] of Object.entries(PLATFORM_COMPANY_MAPPINGS)) {
+    const platformId = platformsMap[platformName];
+    if (!platformId) {
+      console.warn(`Platform with name "${platformName}" not found. Skipping associated companies.`);
+      continue;
+    }
+
+    for (const company of companyIds) {
+      companies.push({
+        name: company,
+        platform_id: platformId,
+        external_company_id: company,
+      });
+    }
+  }
+
+  // Insert companies in bulk
+  try {
+    await db.transaction(async (tx) => {
+      await tx.insert(schema.companies).values(companies).onConflictDoNothing();
+    });
+    console.log("Companies saved successfully.");
+  } catch (error) {
+    console.error("Failed to save companies data:", error);
+  }
+}
+
 const PLATFORMS = ["greenhouse", "lever"] as const;
 type Platform = (typeof PLATFORMS)[number];
 const PLATFORM_COMPANY_MAPPINGS: Record<Platform, Set<string>> = {
