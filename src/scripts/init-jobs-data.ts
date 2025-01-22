@@ -83,9 +83,9 @@ const PLATFORM_COMPANY_MAPPINGS: Record<Platform, Set<string>> = {
 };
 
 interface Job {
-  externalJobId: string;
   title: string;
   description: string;
+  externalJobId: string;
   externalJobUrl: string;
 }
 export async function getJobs() {

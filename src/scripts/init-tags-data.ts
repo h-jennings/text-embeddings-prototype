@@ -7,8 +7,7 @@ export async function saveJobFunctionTags() {
   const jobFunctionData = await fetchJobFunctionEmbeddings();
   try {
     await db.transaction(async (tx) => {
-      await tx.delete(schema.tags);
-      await tx.insert(schema.tags).values(jobFunctionData);
+      await tx.insert(schema.tags).values(jobFunctionData).onConflictDoNothing();
     });
   } catch (error) {
     console.error("Failed to update job function tags:", error);
