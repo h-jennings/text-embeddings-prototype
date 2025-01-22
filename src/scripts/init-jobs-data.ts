@@ -86,6 +86,7 @@ interface Job {
   externalJobId: string;
   title: string;
   description: string;
+  externalJobUrl: string;
 }
 export async function getJobs() {
   const limit = pLimit(5); // Maximum number of concurrent requests
@@ -137,9 +138,10 @@ async function fetchJobs(platform: Platform, companyId: string): Promise<Array<J
 
         return parsed.jobs.map((job) => {
           return {
-            externalJobId: job.id.toString(),
             title: job.title,
             description: he.decode(job.content),
+            externalJobId: job.id.toString(),
+            externalJobUrl: job.absolute_url,
           };
         });
       }
@@ -157,9 +159,10 @@ async function fetchJobs(platform: Platform, companyId: string): Promise<Array<J
 
         return parsed.map((job) => {
           return {
-            externalJobId: job.id,
             title: job.text,
             description: job.descriptionPlain + "\n" + job.additionalPlain,
+            externalJobId: job.id,
+            externalJobUrl: job.hostedUrl,
           };
         });
       }

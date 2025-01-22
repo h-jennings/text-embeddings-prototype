@@ -43,6 +43,13 @@
       "when": 1737498593561,
       "tag": "0005_adding-external-id-to-job",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1737556539620,
+      "tag": "0006_adding-external-url-to-job",
+      "breakpoints": true
     }
   ]
 }
