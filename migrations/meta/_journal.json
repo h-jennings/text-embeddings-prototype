@@ -57,6 +57,27 @@
       "when": 1737560713253,
       "tag": "0007_adding-company-and-platform-tables",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1737667285587,
+      "tag": "0008_adding-created-and-updated-at",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1737667822490,
+      "tag": "0009_updating-created-and-updated-at",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1737669205789,
+      "tag": "0010_making-updated-and-created-at-req",
+      "breakpoints": true
     }
   ]
 }

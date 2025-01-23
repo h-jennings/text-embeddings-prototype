@@ -1,8 +1,17 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import * as s from "drizzle-orm/sqlite-core";
 
 export const platforms = s.sqliteTable("platforms", {
   id: s.integer().primaryKey().notNull(),
+  created_at: s
+    .text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+  updated_at: s
+    .text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
   name: s.text().notNull().unique(),
 });
 
@@ -12,6 +21,15 @@ export const platformsRelations = relations(platforms, ({ many }) => ({
 
 export const companies = s.sqliteTable("companies", {
   id: s.integer().primaryKey().notNull(),
+  created_at: s
+    .text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+  updated_at: s
+    .text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
   name: s.text().notNull(),
   external_company_id: s.text().notNull(),
   platform_id: s
@@ -31,6 +49,15 @@ export const companiesRelations = relations(companies, ({ many, one }) => ({
 
 export const tags = s.sqliteTable("tags", {
   id: s.integer().primaryKey().notNull(),
+  created_at: s
+    .text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+  updated_at: s
+    .text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
   name: s.text().notNull(),
   description: s.text().notNull(),
   vector: s.text({ mode: "json" }).$type<Array<number>>(),
@@ -44,6 +71,15 @@ export const jobs = s.sqliteTable(
   "jobs",
   {
     id: s.integer().primaryKey().notNull(),
+    created_at: s
+      .text("created_at")
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`),
+    updated_at: s
+      .text("updated_at")
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
     url: s.text().notNull().unique(),
     title: s.text().notNull(),
     description: s.text(),
