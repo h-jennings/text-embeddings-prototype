@@ -45,6 +45,7 @@ export const companiesRelations = relations(companies, ({ many, one }) => ({
   platform: one(platforms, {
     fields: [companies.platform_id],
     references: [platforms.id],
+    relationName: "platform",
   }),
 }));
 
@@ -101,6 +102,7 @@ export const jobsRelations = relations(jobs, ({ many, one }) => ({
   company: one(companies, {
     fields: [jobs.company_id],
     references: [companies.id],
+    relationName: "company",
   }),
   summaries: many(jobSummaries),
 }));
@@ -136,10 +138,12 @@ export const jobSummariesRelations = relations(jobSummaries, ({ one }) => ({
   job: one(jobs, {
     fields: [jobSummaries.job_id],
     references: [jobs.id],
+    relationName: "job",
   }),
   prompt: one(jobSummaryPrompts, {
     fields: [jobSummaries.prompt_id],
     references: [jobSummaryPrompts.id],
+    relationName: "prompt",
   }),
 }));
 
@@ -175,9 +179,11 @@ export const tagsToJobsRelations = relations(tagsToJobs, ({ one }) => ({
   tag: one(tags, {
     fields: [tagsToJobs.tag_id],
     references: [tags.id],
+    relationName: "tag",
   }),
   job: one(jobs, {
     fields: [tagsToJobs.job_id],
     references: [jobs.id],
+    relationName: "job",
   }),
 }));
