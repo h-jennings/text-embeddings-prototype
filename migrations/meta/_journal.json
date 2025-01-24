@@ -78,6 +78,13 @@
       "when": 1737669205789,
       "tag": "0010_making-updated-and-created-at-req",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1737736361775,
+      "tag": "0011_enforce-uniqueness-on-name-and-external-ids",
+      "breakpoints": true
     }
   ]
 }

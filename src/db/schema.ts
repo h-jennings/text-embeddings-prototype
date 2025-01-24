@@ -31,7 +31,7 @@ export const companies = s.sqliteTable("companies", {
     .default(sql`(CURRENT_TIMESTAMP)`)
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
   name: s.text().notNull(),
-  external_company_id: s.text().notNull(),
+  external_company_id: s.text().notNull().unique(),
   platform_id: s
     .integer()
     .notNull()
@@ -59,7 +59,7 @@ export const tags = s.sqliteTable("tags", {
     .notNull()
     .default(sql`(CURRENT_TIMESTAMP)`)
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
-  name: s.text().notNull(),
+  name: s.text().notNull().unique(),
   description: s.text().notNull(),
   vector: s.text({ mode: "json" }).$type<Array<number>>(),
 });
