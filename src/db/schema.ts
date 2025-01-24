@@ -61,7 +61,10 @@ export const tags = s.sqliteTable("tags", {
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
   name: s.text().notNull().unique(),
   description: s.text().notNull(),
-  vector: s.text({ mode: "json" }).$type<Array<number>>(),
+  vector: s
+    .text({ mode: "json" })
+    .$type<Array<number>>()
+    .default(sql`'[]'`),
 });
 
 export const tagsRelations = relations(tags, ({ many }) => ({

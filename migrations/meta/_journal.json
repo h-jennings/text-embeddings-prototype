@@ -92,6 +92,13 @@
       "when": 1737739488190,
       "tag": "0012_remove-static-ai-summary-field",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1737741193623,
+      "tag": "0013_adding-default-vector-value",
+      "breakpoints": true
     }
   ]
 }
