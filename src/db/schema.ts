@@ -96,15 +96,70 @@ export const jobs = s.sqliteTable(
   },
   (table) => [s.index("company_id_idx").on(table.company_id)],
 );
-
-export type NewJob = typeof jobs.$inferInsert;
-
 export const jobsRelations = relations(jobs, ({ many, one }) => ({
   tags_to_jobs: many(tagsToJobs),
   company: one(companies, {
     fields: [jobs.company_id],
     references: [companies.id],
   }),
+  summaries: many(jobSummaries),
+}));
+export type NewJob = typeof jobs.$inferInsert;
+
+export const jobSummaries = s.sqliteTable("job_summaries", {
+  id: s.integer().primaryKey().notNull(),
+  created_at: s
+    .text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+  updated_at: s
+    .text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  job_id: s
+    .integer()
+    .notNull()
+    .references(() => jobs.id),
+  prompt_id: s
+    .integer()
+    .notNull()
+    .references(() => jobSummaryPrompts.id),
+  summary: s.text().notNull(),
+  vector: s
+    .text({ mode: "json" })
+    .$type<Array<number>>()
+    .default(sql`'[]'`),
+});
+
+export const jobSummariesRelations = relations(jobSummaries, ({ one }) => ({
+  job: one(jobs, {
+    fields: [jobSummaries.job_id],
+    references: [jobs.id],
+  }),
+  prompt: one(jobSummaryPrompts, {
+    fields: [jobSummaries.prompt_id],
+    references: [jobSummaryPrompts.id],
+  }),
+}));
+
+export const jobSummaryPrompts = s.sqliteTable("job_summary_prompts", {
+  id: s.integer().primaryKey().notNull(),
+  created_at: s
+    .text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+  updated_at: s
+    .text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  content: s.text().notNull(),
+  description: s.text(),
+});
+
+export const jobSummaryPromptsRelations = relations(jobSummaryPrompts, ({ many }) => ({
+  summaries: many(jobSummaries),
 }));
 
 export const tagsToJobs = s.sqliteTable(

@@ -99,6 +99,13 @@
       "when": 1737741193623,
       "tag": "0013_adding-default-vector-value",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1737741375497,
+      "tag": "0014_adding-ai-summary-tables",
+      "breakpoints": true
     }
   ]
 }
