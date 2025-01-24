@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { db } from "./client.js";
 import { companies, jobs, platforms, tags, tagsToJobs } from "./schema.js";
 
