@@ -1,6 +1,11 @@
+import * as schema from "../db/schema.js";
 import { z } from "zod";
 import he from "he";
 import pLimit from "p-limit";
+import { Platform } from "../data/companies.js";
+import { db } from "../db/client.js";
+import { getPlatforms } from "../utils/get-platforms.js";
+import { sql } from "drizzle-orm";
 
 // 1. Pipe through a summarization GPT
 // 2. Embed the summary
@@ -36,95 +41,93 @@ function createLeverJobUrl(companyId: string) {
   return `https://api.lever.co/v0/postings/${companyId}?mode=json` as const;
 }
 
-const PLATFORMS = ["greenhouse", "lever"] as const;
-type Platform = (typeof PLATFORMS)[number];
-
-const PLATFORM_COMPANY_MAPPINGS: Record<Platform, Set<string>> = {
-  greenhouse: new Set([
-    "lyft",
-    // "airtable",
-    // "datadog",
-    // "flexport",
-    // "benchling",
-    // "webflow",
-    // "andurilindustries",
-    // "duolingo",
-    // "appliedintuition",
-    // "via",
-    // "sambanovasystems",
-    // "latentai",
-    // "c3iot",
-    // "tanium",
-    // "syncro",
-    // "sandboxaq",
-    // "liveviewtechnologiesinc",
-    // "arenaai",
-    // "trueanomalyinc",
-    // "highwire",
-    // "rapp",
-    // "imafinancialgroup",
-    // "appliedintuition",
-    // "sambanovasystems",
-    // "gongio",
-    // "vannevarlabs",
-    // "whatnot",
-  ]),
-  lever: new Set([
-    // "pryon",
-    "palantir",
-    // "outreach",
-    // "rigetti",
-    // "ontic",
-    // "shieldai",
-    // "episci",
-    // "govini",
-    // "attentive"
-  ]),
-};
-
 interface Job {
   title: string;
   description: string;
   externalJobId: string;
   externalJobUrl: string;
 }
-export async function getJobs() {
-  const limit = pLimit(5); // Maximum number of concurrent requests
-  const results: Job[] = [];
 
-  // Generate tasks for each platform and company
-  const tasks = Object.entries(PLATFORM_COMPANY_MAPPINGS).flatMap(([platform, companyIds]) => {
-    return Array.from(companyIds).map((companyId) => {
-      return limit(async () => {
-        try {
-          const jobs = await fetchJobsWithRetry(platform as Platform, companyId);
-          return jobs;
-        } catch (error) {
-          console.error(`Failed to fetch jobs for ${companyId} on platform ${platform}:`, error);
-          return [];
+interface JobFetchResult {
+  companyId: number;
+  companyName: string;
+  success: boolean;
+  jobsProcessed: number;
+  error?: string;
+}
+export async function createJobsData() {
+  console.log("Starting to create jobs data...");
+  const limit = pLimit(5); // Maximum number of concurrent requests
+  const companies = await db.select().from(schema.companies);
+  const results: Array<JobFetchResult> = [];
+
+  const tasks = companies.map((company) => {
+    return limit(async () => {
+      try {
+        const jobs = await fetchJobsWithRetry(company.platform_id, company.external_company_id);
+
+        if (jobs.length > 0) {
+          await db
+            .insert(schema.jobs)
+            .values(
+              jobs.map((job): schema.NewJob => {
+                return {
+                  title: job.title,
+                  description: job.description,
+                  external_job_id: job.externalJobId,
+                  external_job_url: job.externalJobUrl,
+                  url: job.externalJobUrl,
+                  company_id: company.id,
+                };
+              }),
+            )
+            .onConflictDoUpdate({
+              target: schema.jobs.external_job_id,
+              set: {
+                title: sql`excluded.title`,
+                description: sql`excluded.description`,
+                updated_at: sql`CURRENT_TIMESTAMP`,
+              },
+            });
+
+          results.push({
+            companyId: company.id,
+            companyName: company.name,
+            success: true,
+            jobsProcessed: jobs.length,
+          });
+
+          console.log(`Processed ${jobs.length} jobs for company ${company.name}`);
         }
-      });
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        console.error(`Failed to process jobs for company ${company.name}:`, errorMessage);
+
+        results.push({
+          companyId: company.id,
+          companyName: company.name,
+          success: false,
+          jobsProcessed: 0,
+          error: errorMessage,
+        });
+      }
     });
   });
 
-  // Await all tasks and flatten results
-  const taskResults = await Promise.allSettled(tasks);
+  await Promise.all(tasks);
 
-  for (const result of taskResults) {
-    if (result.status === "fulfilled") {
-      results.push(...result.value);
-    } else {
-      console.error("A task failed:", result.reason);
-    }
-  }
+  const succeeded = results.filter((r) => r.success).length;
+  const failed = results.filter((r) => !r.success).length;
+  const totalJobs = results.reduce((sum, r) => sum + r.jobsProcessed, 0);
 
-  return results;
+  console.log(`Job fetch complete. Companies: ${succeeded} succeeded, ${failed} failed. Total jobs: ${totalJobs}`);
 }
 
-async function fetchJobs(platform: Platform, companyId: string): Promise<Array<Job>> {
+async function fetchJobs(platformId: number, companyId: string): Promise<Array<Job>> {
+  console.log(`Fetching jobs for company ${companyId} on platform ${platformId}...`);
   try {
-    switch (platform) {
-      case "greenhouse": {
+    switch (platformId) {
+      case 1: {
         const response = await fetch(createGreenhouseJobUrl(companyId));
 
         if (!response.ok) {
@@ -136,6 +139,7 @@ async function fetchJobs(platform: Platform, companyId: string): Promise<Array<J
 
         const parsed = GreenhouseJobsResponseSchema.parse(data);
 
+        console.log(`Fetched ${parsed.jobs.length} jobs for company ${companyId} from Greenhouse.`);
         return parsed.jobs.map((job) => {
           return {
             title: job.title,
@@ -145,7 +149,7 @@ async function fetchJobs(platform: Platform, companyId: string): Promise<Array<J
           };
         });
       }
-      case "lever": {
+      case 2: {
         const response = await fetch(createLeverJobUrl(companyId));
 
         if (!response.ok) {
@@ -157,6 +161,7 @@ async function fetchJobs(platform: Platform, companyId: string): Promise<Array<J
 
         const parsed = LeverJobsResponseSchema.parse(data);
 
+        console.log(`Fetched ${parsed.length} jobs for company ${companyId} from Lever.`);
         return parsed.map((job) => {
           return {
             title: job.text,
@@ -176,10 +181,11 @@ async function fetchJobs(platform: Platform, companyId: string): Promise<Array<J
   }
 }
 
-async function fetchJobsWithRetry(platform: Platform, companyId: string, retries = 3, delay = 1000) {
+async function fetchJobsWithRetry(platformId: number, companyId: string, retries = 3, delay = 1000) {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      const jobs = await fetchJobs(platform, companyId);
+      console.log(`Attempt ${attempt}/${retries} to fetch jobs for company ${companyId}...`);
+      const jobs = await fetchJobs(platformId, companyId);
       return jobs;
     } catch (error) {
       console.error(`Attempt ${attempt}/${retries} failed for ${companyId}:`, error);
@@ -189,7 +195,3 @@ async function fetchJobsWithRetry(platform: Platform, companyId: string, retries
   }
   return [];
 }
-
-getJobs().then((response) => {
-  console.log(response);
-});

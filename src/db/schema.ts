@@ -38,6 +38,7 @@ export const companies = s.sqliteTable("companies", {
     .references(() => platforms.id),
 });
 export type NewCompany = typeof companies.$inferInsert;
+export type Company = typeof companies.$inferSelect;
 
 export const companiesRelations = relations(companies, ({ many, one }) => ({
   jobs: many(jobs),
@@ -94,6 +95,8 @@ export const jobs = s.sqliteTable(
   },
   (table) => [s.index("company_id_idx").on(table.company_id)],
 );
+
+export type NewJob = typeof jobs.$inferInsert;
 
 export const jobsRelations = relations(jobs, ({ many, one }) => ({
   tags_to_jobs: many(tagsToJobs),
