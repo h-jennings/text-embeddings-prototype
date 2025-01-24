@@ -86,8 +86,6 @@ export const jobs = s.sqliteTable(
     description: s.text(),
     external_job_id: s.text().notNull().unique(),
     external_job_url: s.text().notNull().unique(),
-    ai_summary: s.text(),
-    ai_summary_vector: s.text({ mode: "json" }).$type<Array<number>>(),
     company_id: s
       .integer("company_id")
       .notNull()

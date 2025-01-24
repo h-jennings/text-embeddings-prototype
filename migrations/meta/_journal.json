@@ -85,6 +85,13 @@
       "when": 1737736361775,
       "tag": "0011_enforce-uniqueness-on-name-and-external-ids",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1737739488190,
+      "tag": "0012_remove-static-ai-summary-field",
+      "breakpoints": true
     }
   ]
 }
