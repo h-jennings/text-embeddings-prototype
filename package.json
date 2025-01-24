@@ -10,6 +10,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:reset": "tsx --no-warnings --env-file=.env src/db/reset.ts",
     "db:seed": "tsx --no-warnings --env-file=.env src/db/seed.ts",
+    "db:clear": "tsx --no-warnings --env-file=.env src/db/clear-db-records.ts",
     "db:studio": "drizzle-kit studio"
   },
   "keywords": [],
