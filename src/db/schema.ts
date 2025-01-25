@@ -180,6 +180,7 @@ export const tagsToJobs = s.sqliteTable(
   },
   (table) => [s.primaryKey({ columns: [table.tag_id, table.job_id] })],
 );
+export type NewTagsToJobs = typeof tagsToJobs.$inferInsert;
 
 export const tagsToJobsRelations = relations(tagsToJobs, ({ one }) => ({
   tag: one(tags, {
