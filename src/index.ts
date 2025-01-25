@@ -1,4 +1,4 @@
-import { eq, sql, isNotNull } from "drizzle-orm";
+import { eq, sql, isNotNull, and } from "drizzle-orm";
 import { db } from "./db/client.js";
 import * as schema from "./db/schema.js";
 import { openai } from "./lib/openai.js";
@@ -8,7 +8,6 @@ import { cosineSimilarity } from "./utils/cosine-similarity.js";
 
 async function main() {
   try {
-    const jobFunctionEmbeddings = await db.select().from(schema.tags).where(isNotNull(schema.tags.vector));
     const jobs = await db.query.jobs.findMany({
       limit: 100,
       offset: 100,
@@ -21,8 +20,36 @@ async function main() {
       try {
         const { title, description, id } = job ?? {};
         const PROMPT_ID = 2;
-        const prompt = await getPrompt(PROMPT_ID, { title, description: description ?? "" });
+        const savedSummary = await db
+          .select()
+          .from(schema.jobSummaries)
+          .where(and(eq(schema.jobSummaries.job_id, id), eq(schema.jobSummaries.prompt_id, PROMPT_ID)))
+          .execute()
+          .then((res) => res[0]);
 
+        // No need to create new vectors or summaries if we already have one saved
+        if (savedSummary) {
+          const tags = await getTags(savedSummary.vector ?? []);
+
+          if (tags.length > 0) {
+            tagsAddedCount += 1;
+            await db
+              .insert(schema.tagsToJobs)
+              .values(
+                tags.map((tag): schema.NewTagsToJobs => {
+                  return {
+                    job_id: job.id,
+                    tag_id: tag.id,
+                  };
+                }),
+              )
+              .onConflictDoNothing();
+          }
+
+          return;
+        }
+
+        const prompt = await getPrompt(PROMPT_ID, { title, description: description ?? "" });
         const response = await openai.chat.completions.create({
           model: "gpt-3.5-turbo-1106",
           messages: [
@@ -33,24 +60,10 @@ async function main() {
         });
 
         const summary = response.choices[0].message.content;
-
         const refinedSummary = removeStopwords(summary?.split(" ") ?? []).join(" ");
-
         const jobSummaryEmbedding = await createEmbedding(refinedSummary ?? "");
 
-        const scored = jobFunctionEmbeddings.map(({ vector, ...rest }) => {
-          const score = cosineSimilarity(jobSummaryEmbedding, vector!);
-
-          return {
-            ...rest,
-            vector,
-            score,
-          };
-        });
-
-        const tags = scored.filter(({ score }) => {
-          return score > 0.45;
-        });
+        const tags = await getTags(jobSummaryEmbedding);
 
         await db.transaction(async (tx) => {
           await tx
@@ -64,8 +77,8 @@ async function main() {
             .onConflictDoUpdate({
               target: [schema.jobSummaries.job_id, schema.jobSummaries.prompt_id],
               set: {
-                summary: summary ?? "",
-                vector: jobSummaryEmbedding,
+                summary: sql`excluded.summary`,
+                vector: sql`excluded.vector`,
                 updated_at: sql`(CURRENT_TIMESTAMP)`,
               },
             });
@@ -117,3 +130,22 @@ async function getPrompt(id: number, { title, description }: { title: string; de
   }
 }
 main();
+
+async function getTags(inputVector: Array<number>) {
+  const jobFunctionEmbeddings = await db.select().from(schema.tags).where(isNotNull(schema.tags.vector));
+  const scored = jobFunctionEmbeddings.map(({ vector, ...rest }) => {
+    const score = cosineSimilarity(inputVector, vector!);
+
+    return {
+      ...rest,
+      vector,
+      score,
+    };
+  });
+
+  const tags = scored.filter(({ score }) => {
+    return score > 0.45;
+  });
+
+  return tags;
+}

@@ -86,7 +86,7 @@ export async function createJobsData() {
               set: {
                 title: sql`excluded.title`,
                 description: sql`excluded.description`,
-                updated_at: sql`CURRENT_TIMESTAMP`,
+                updated_at: sql`(CURRENT_TIMESTAMP)`,
               },
             });
 
