@@ -8,10 +8,7 @@ import { cosineSimilarity } from "./utils/cosine-similarity.js";
 
 async function main() {
   try {
-    const jobs = await db.query.jobs.findMany({
-      limit: 100,
-      offset: 100,
-    });
+    const jobs = await db.query.jobs.findMany();
     let tagsAddedCount = 0;
 
     if (jobs.length === 0) return;
