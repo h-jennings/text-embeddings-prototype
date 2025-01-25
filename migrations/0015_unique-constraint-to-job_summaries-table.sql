@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `unique_job_prompt` ON `job_summaries` (`job_id`,`prompt_id`);

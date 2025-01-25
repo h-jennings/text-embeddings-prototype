@@ -108,31 +108,37 @@ export const jobsRelations = relations(jobs, ({ many, one }) => ({
 }));
 export type NewJob = typeof jobs.$inferInsert;
 
-export const jobSummaries = s.sqliteTable("job_summaries", {
-  id: s.integer().primaryKey().notNull(),
-  created_at: s
-    .text("created_at")
-    .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`),
-  updated_at: s
-    .text("updated_at")
-    .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`)
-    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
-  job_id: s
-    .integer()
-    .notNull()
-    .references(() => jobs.id),
-  prompt_id: s
-    .integer()
-    .notNull()
-    .references(() => jobSummaryPrompts.id),
-  summary: s.text().notNull(),
-  vector: s
-    .text({ mode: "json" })
-    .$type<Array<number>>()
-    .default(sql`'[]'`),
-});
+export const jobSummaries = s.sqliteTable(
+  "job_summaries",
+  {
+    id: s.integer().primaryKey().notNull(),
+    created_at: s
+      .text("created_at")
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`),
+    updated_at: s
+      .text("updated_at")
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+    job_id: s
+      .integer()
+      .notNull()
+      .references(() => jobs.id),
+    prompt_id: s
+      .integer()
+      .notNull()
+      .references(() => jobSummaryPrompts.id),
+    summary: s.text().notNull(),
+    vector: s
+      .text({ mode: "json" })
+      .$type<Array<number>>()
+      .default(sql`'[]'`),
+  },
+  (t) => {
+    return [s.unique("unique_job_prompt").on(t.job_id, t.prompt_id)];
+  },
+);
 
 export const jobSummariesRelations = relations(jobSummaries, ({ one }) => ({
   job: one(jobs, {
