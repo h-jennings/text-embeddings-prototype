@@ -5,102 +5,124 @@ import { openai } from "./lib/openai.js";
 import { removeStopwords } from "./utils/stopwords.js";
 import { createEmbedding } from "./utils/create-embedding.js";
 import { cosineSimilarity } from "./utils/cosine-similarity.js";
+import pLimit from "p-limit";
 
+const JOBS_LIMIT = 1000;
 async function main() {
   try {
-    const jobs = await db.query.jobs.findMany();
+    const limit = pLimit(50); // Maximum number of concurrent requests
+    const jobs = await db.query.jobs.findMany({
+      limit: JOBS_LIMIT,
+    });
     let tagsAddedCount = 0;
 
     if (jobs.length === 0) return;
 
-    const tasks = jobs.map(async (job) => {
-      try {
-        const { title, description, id } = job ?? {};
-        const PROMPT_ID = 2;
-        const savedSummary = await db
-          .select()
-          .from(schema.jobSummaries)
-          .where(and(eq(schema.jobSummaries.job_id, id), eq(schema.jobSummaries.prompt_id, PROMPT_ID)))
-          .execute()
-          .then((res) => res[0]);
+    const batchSize = 100;
 
-        // No need to create new vectors or summaries if we already have one saved
-        if (savedSummary) {
-          const tags = await getTags(savedSummary.vector ?? []);
+    for (let i = 0; i < jobs.length; i += batchSize) {
+      const batch = jobs.slice(i, i + batchSize);
+      const tasks = batch.map((job) => {
+        return limit(async () => {
+          try {
+            const { title, description, id } = job;
+            const PROMPT_ID = 2;
+            const savedSummary = await db
+              .select()
+              .from(schema.jobSummaries)
+              .where(and(eq(schema.jobSummaries.job_id, id), eq(schema.jobSummaries.prompt_id, PROMPT_ID)))
+              .execute()
+              .then((res) => res[0]);
 
-          if (tags.length > 0) {
-            tagsAddedCount += 1;
-            await db
-              .insert(schema.tagsToJobs)
-              .values(
-                tags.map((tag): schema.NewTagsToJobs => {
-                  return {
-                    job_id: job.id,
-                    tag_id: tag.id,
-                  };
-                }),
-              )
-              .onConflictDoNothing();
-          }
+            // No need to create new vectors or summaries if we already have one saved
+            if (savedSummary) {
+              const tags = await getTags(savedSummary.vector ?? []);
 
-          return;
-        }
+              if (tags.length > 0) {
+                tagsAddedCount += 1;
+                await db
+                  .insert(schema.tagsToJobs)
+                  .values(
+                    tags.map((tag): schema.NewTagsToJobs => {
+                      return {
+                        job_id: job.id,
+                        tag_id: tag.id,
+                      };
+                    }),
+                  )
+                  .onConflictDoNothing();
+              }
 
-        const prompt = await getPrompt(PROMPT_ID, { title, description: description ?? "" });
-        const response = await openai.chat.completions.create({
-          model: "gpt-3.5-turbo-1106",
-          messages: [
-            { role: "system", content: "You are a professional text summarizer for a job classification pipeline." },
-            { role: "user", content: prompt },
-          ],
-          temperature: 0.1,
-        });
+              return;
+            }
 
-        const summary = response.choices[0].message.content;
-        const refinedSummary = removeStopwords(summary?.split(" ") ?? []).join(" ");
-        const jobSummaryEmbedding = await createEmbedding(refinedSummary ?? "");
-
-        const tags = await getTags(jobSummaryEmbedding);
-
-        await db.transaction(async (tx) => {
-          await tx
-            .insert(schema.jobSummaries)
-            .values({
-              job_id: id,
-              prompt_id: PROMPT_ID,
-              summary: summary ?? "",
-              vector: jobSummaryEmbedding,
-            })
-            .onConflictDoUpdate({
-              target: [schema.jobSummaries.job_id, schema.jobSummaries.prompt_id],
-              set: {
-                summary: sql`excluded.summary`,
-                vector: sql`excluded.vector`,
-                updated_at: sql`(CURRENT_TIMESTAMP)`,
-              },
+            const prompt = await getPrompt(PROMPT_ID, { title, description: description ?? "" });
+            const response = await openai.chat.completions.create({
+              model: "gpt-3.5-turbo-1106",
+              messages: [
+                {
+                  role: "system",
+                  content: "You are a professional text summarizer for a job classification pipeline.",
+                },
+                { role: "user", content: prompt },
+              ],
+              temperature: 0.1,
             });
 
-          if (tags.length > 0) {
-            tagsAddedCount += 1;
-            await tx
-              .insert(schema.tagsToJobs)
-              .values(
-                tags.map((tag): schema.NewTagsToJobs => {
-                  return {
-                    job_id: job.id,
-                    tag_id: tag.id,
-                  };
-                }),
-              )
-              .onConflictDoNothing();
+            const summary = response.choices[0].message.content;
+            const refinedSummary = removeStopwords(summary?.split(" ") ?? []).join(" ");
+            const jobSummaryEmbedding = await createEmbedding(refinedSummary ?? "");
+
+            const tags = await getTags(jobSummaryEmbedding);
+
+            await db.transaction(async (tx) => {
+              await tx
+                .insert(schema.jobSummaries)
+                .values({
+                  job_id: id,
+                  prompt_id: PROMPT_ID,
+                  summary: summary ?? "",
+                  vector: jobSummaryEmbedding,
+                })
+                .onConflictDoUpdate({
+                  target: [schema.jobSummaries.job_id, schema.jobSummaries.prompt_id],
+                  set: {
+                    summary: sql`excluded.summary`,
+                    vector: sql`excluded.vector`,
+                    updated_at: sql`(CURRENT_TIMESTAMP)`,
+                  },
+                });
+
+              if (tags.length > 0) {
+                tagsAddedCount += 1;
+                await tx
+                  .insert(schema.tagsToJobs)
+                  .values(
+                    tags.map((tag): schema.NewTagsToJobs => {
+                      return {
+                        job_id: job.id,
+                        tag_id: tag.id,
+                      };
+                    }),
+                  )
+                  .onConflictDoNothing();
+              }
+            });
+          } catch (error) {
+            console.error(`Failed to process job with ID ${job.id}:`, error);
           }
         });
-      } catch (error) {
-        console.error(`Failed to process job with ID ${job.id}:`, error);
-      }
-    });
+      });
 
-    await Promise.all(tasks);
+      await Promise.all(tasks)
+        .catch((error) => {
+          console.error("Batch processing failed:", error);
+        })
+        .finally(() => {
+          console.log(`Processed ${i + batch.length} of ${jobs.length} jobs`);
+        });
+    }
+
     console.log(`Tags were added to: ${tagsAddedCount} jobs.`);
   } catch (error) {
     console.error("Failed to execute main function:", error);

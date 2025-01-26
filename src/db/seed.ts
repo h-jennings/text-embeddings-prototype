@@ -10,7 +10,9 @@ async function main() {
 
     // Step 1: Independent operations
     console.log("Creating platforms and tags...");
-    await Promise.all([createPlatformsData(), createJobFunctionTagData(), createPromptsData()]);
+    await createPlatformsData();
+    await createJobFunctionTagData();
+    await createPromptsData();
 
     // Step 2: Companies (depends on platforms)
     console.log("Creating companies...");
