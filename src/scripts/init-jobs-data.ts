@@ -57,7 +57,7 @@ interface JobFetchResult {
 }
 export async function createJobsData() {
   console.log("Starting to create jobs data...");
-  const limit = pLimit(5); // Maximum number of concurrent requests
+  const limit = pLimit(10); // Maximum number of concurrent requests
   const companies = await db.select().from(schema.companies);
   const results: Array<JobFetchResult> = [];
 
