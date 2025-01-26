@@ -66,13 +66,6 @@
       "breakpoints": true
     },
     {
-      "idx": 9,
-      "version": "6",
-      "when": 1737667822490,
-      "tag": "0009_updating-created-and-updated-at",
-      "breakpoints": true
-    },
-    {
       "idx": 10,
       "version": "6",
       "when": 1737669205789,
