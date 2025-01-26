@@ -1,6 +1,13 @@
 # Text Embeddings Prototype
 
-This project is a prototype for generating and utilizing text embeddings for job classification. It leverages OpenAI's GPT-3.5 for text summarization and cosine similarity for embedding comparisons.
+This project is a prototype for generating and utilizing text embeddings for job classification. It leverages OpenAI's GPT-4 for text summarization and cosine similarity for embedding comparisons.
+
+## Technical Details
+
+- **Language Model**: GPT-4 (gpt-4o-mini-2024-07-18)
+- **Embedding Model**: text-embedding-ada-002
+- **Similarity Metric**: Cosine Similarity
+- **Similarity Threshold**: 0.45 (current)
 
 ## Table of Contents
 
