@@ -2,13 +2,23 @@ import * as schema from "../db/schema.js";
 import job_functions from "../data/job-functions.json" assert { type: "json" };
 import { db } from "../db/client.js";
 import { createEmbedding } from "../utils/create-embedding.js";
+import { sql } from "drizzle-orm";
 
 export async function createJobFunctionTagData() {
   console.log("Starting to create job function tag data...");
   const jobFunctionData = await fetchJobFunctionEmbeddings();
   try {
     await db.transaction(async (tx) => {
-      await tx.insert(schema.tags).values(jobFunctionData).onConflictDoNothing();
+      await tx
+        .insert(schema.tags)
+        .values(jobFunctionData)
+        .onConflictDoUpdate({
+          target: schema.tags.name,
+          set: {
+            description: sql`excluded.description`,
+            vector: sql`excluded.vector`,
+          },
+        });
     });
     console.log("Job function tag data created successfully.");
   } catch (error) {
