@@ -1,6 +1,7 @@
 import { createCompaniesData } from "../scripts/init-companies-data.js";
 import { createJobsData } from "../scripts/init-jobs-data.js";
 import { createPlatformsData } from "../scripts/init-platforms-data.js";
+import { createPromptsData } from "../scripts/init-prompts-data.js";
 import { createJobFunctionTagData } from "../scripts/init-tags-data.js";
 
 async function main() {
@@ -9,7 +10,7 @@ async function main() {
 
     // Step 1: Independent operations
     console.log("Creating platforms and tags...");
-    await Promise.all([createPlatformsData(), createJobFunctionTagData()]);
+    await Promise.all([createPlatformsData(), createJobFunctionTagData(), createPromptsData()]);
 
     // Step 2: Companies (depends on platforms)
     console.log("Creating companies...");

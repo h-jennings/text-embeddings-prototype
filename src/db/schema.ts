@@ -167,6 +167,7 @@ export const jobSummaryPrompts = s.sqliteTable("job_summary_prompts", {
   content: s.text().notNull(),
   description: s.text(),
 });
+export type NewJobSummaryPrompt = typeof jobSummaryPrompts.$inferInsert;
 
 export const jobSummaryPromptsRelations = relations(jobSummaryPrompts, ({ many }) => ({
   summaries: many(jobSummaries),
