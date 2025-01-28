@@ -1,13 +1,10 @@
-import { eq, sql, isNotNull, and } from "drizzle-orm";
+import { eq, sql, and } from "drizzle-orm";
 import { db } from "./db/client.js";
 import * as schema from "./db/schema.js";
-import { openai } from "./lib/openai.js";
-import { removeStopwords } from "./utils/stopwords.js";
 import { createEmbedding } from "./utils/create-embedding.js";
-import { cosineSimilarity } from "./utils/cosine-similarity.js";
 import pLimit from "p-limit";
-import { getPrompt } from "./utils/get-prompt.js";
-import { createJobSummary } from "./processors/create-job-summary.js";
+import { createJobSummary } from "./processors/create-job-summary/create-job-summary.js";
+import { getTags } from "./utils/get-tags.js";
 
 const JOBS_LIMIT = 1000;
 async function main() {
@@ -58,10 +55,10 @@ async function main() {
               return;
             }
 
-            const generatedJobSummary = await createJobSummary(PROMPT_ID, { title, description: description ?? "" });
-            const jobSummaryEmbedding = await createEmbedding(generatedJobSummary ?? "");
+            const summary = await createJobSummary(PROMPT_ID, { title, description: description ?? "" });
+            const embedding = await createEmbedding(summary);
 
-            const tags = await getTags(jobSummaryEmbedding);
+            const tags = await getTags(embedding);
 
             await db.transaction(async (tx) => {
               await tx
@@ -69,8 +66,8 @@ async function main() {
                 .values({
                   job_id: id,
                   prompt_id: PROMPT_ID,
-                  summary: generatedJobSummary ?? "",
-                  vector: jobSummaryEmbedding,
+                  summary: summary ?? "",
+                  vector: embedding,
                 })
                 .onConflictDoUpdate({
                   target: [schema.jobSummaries.job_id, schema.jobSummaries.prompt_id],
@@ -119,22 +116,3 @@ async function main() {
 }
 
 main();
-
-async function getTags(inputVector: Array<number>) {
-  const jobFunctionEmbeddings = await db.select().from(schema.tags).where(isNotNull(schema.tags.vector));
-  const scored = jobFunctionEmbeddings.map(({ vector, ...rest }) => {
-    const score = cosineSimilarity(inputVector, vector!);
-
-    return {
-      ...rest,
-      vector,
-      score,
-    };
-  });
-
-  const tags = scored.filter(({ score }) => {
-    return score > 0.45;
-  });
-
-  return tags;
-}
