@@ -6,6 +6,8 @@ import { removeStopwords } from "./utils/stopwords.js";
 import { createEmbedding } from "./utils/create-embedding.js";
 import { cosineSimilarity } from "./utils/cosine-similarity.js";
 import pLimit from "p-limit";
+import { getPrompt } from "./utils/get-prompt.js";
+import { createJobSummary } from "./processors/create-job-summary.js";
 
 const JOBS_LIMIT = 1000;
 async function main() {
@@ -56,22 +58,8 @@ async function main() {
               return;
             }
 
-            const prompt = await getPrompt(PROMPT_ID, { title, description: description ?? "" });
-            const response = await openai.chat.completions.create({
-              model: "gpt-4o-mini-2024-07-18",
-              messages: [
-                {
-                  role: "system",
-                  content: "You are a professional text summarizer for a job classification pipeline.",
-                },
-                { role: "user", content: prompt },
-              ],
-              temperature: 0.1,
-            });
-
-            const summary = response.choices[0].message.content;
-            const refinedSummary = removeStopwords(summary?.split(" ") ?? []).join(" ");
-            const jobSummaryEmbedding = await createEmbedding(refinedSummary ?? "");
+            const generatedJobSummary = await createJobSummary(PROMPT_ID, { title, description: description ?? "" });
+            const jobSummaryEmbedding = await createEmbedding(generatedJobSummary ?? "");
 
             const tags = await getTags(jobSummaryEmbedding);
 
@@ -81,7 +69,7 @@ async function main() {
                 .values({
                   job_id: id,
                   prompt_id: PROMPT_ID,
-                  summary: summary ?? "",
+                  summary: generatedJobSummary ?? "",
                   vector: jobSummaryEmbedding,
                 })
                 .onConflictDoUpdate({
@@ -130,24 +118,6 @@ async function main() {
   }
 }
 
-async function getPrompt(id: number, { title, description }: { title: string; description: string }) {
-  try {
-    const prompt = await db.query.jobSummaryPrompts.findFirst({
-      where: eq(schema.jobSummaryPrompts.id, id),
-    });
-
-    return (
-      prompt?.content.replace(/\{(\w+)\}/g, (_, key) => {
-        const replacements = { title, description };
-
-        return replacements[key as keyof typeof replacements] ?? "";
-      }) ?? ""
-    );
-  } catch (error) {
-    console.error(`Failed to retrieve prompt with ID ${id}:`, error);
-    throw error;
-  }
-}
 main();
 
 async function getTags(inputVector: Array<number>) {
