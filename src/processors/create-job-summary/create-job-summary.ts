@@ -1,6 +1,6 @@
-import { openai } from "../lib/openai.js";
-import { getPrompt } from "../utils/get-prompt.js";
-import { removeStopwords } from "../utils/stopwords.js";
+import { openai } from "../../lib/openai.js";
+import { getPrompt } from "../../utils/get-prompt.js";
+import { removeStopwords } from "../../utils/stopwords.js";
 
 export async function createJobSummary(
   promptId: number,
