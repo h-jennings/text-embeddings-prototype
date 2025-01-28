@@ -29,11 +29,12 @@ export async function createJobFunctionTagData() {
 async function fetchJobFunctionEmbeddings() {
   console.log("Fetching job function embeddings...");
   const embeddings = await Promise.all(
-    job_functions.map(async ({ description, name }) => {
-      const embedding = await createEmbedding(description);
+    job_functions.map(async ({ description, name, keywords }) => {
+      const input = `${description} \n keywords: ${keywords.join(", ")}`;
+      const embedding = await createEmbedding(input);
       return {
         name,
-        description,
+        description: input,
         vector: embedding,
       };
     }),

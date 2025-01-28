@@ -1,82 +1,339 @@
 [
   {
     "name": "Administrative Management",
-    "description": "In an Administrative Management role, they oversee office operations, administrative support staff, and daily organizational processes. They manage scheduling, documentation, resource allocation, and compliance with company policies to maintain efficient workplace operations."
+    "description": "In an Administrative Management role, they oversee office operations, administrative support staff, and daily organizational processes. They manage scheduling, documentation, resource allocation, and compliance with company policies to maintain efficient workplace operations.",
+    "keywords": [
+      "office management",
+      "scheduling",
+      "resource allocation",
+      "compliance",
+      "administrative support",
+      "process management",
+      "organizational efficiency",
+      "policy enforcement",
+      "workplace operations",
+      "office administration",
+      "logistics oversight"
+    ]
   },
   {
     "name": "Business Operations",
-    "description": "In a Business Operations role, they direct company-wide operational strategy, process optimization, and cross-functional collaboration. They oversee budget planning, resource management, and performance metrics to ensure day-to-day business efficiency and alignment with strategic goals."
+    "description": "In a Business Operations role, they direct company-wide operational strategy, process optimization, and cross-functional collaboration. They oversee budget planning, resource management, and performance metrics to ensure day-to-day business efficiency and alignment with strategic goals.",
+    "keywords": [
+      "operational strategy",
+      "process optimization",
+      "cross-functional collaboration",
+      "budget planning",
+      "resource management",
+      "performance metrics",
+      "business efficiency",
+      "strategic alignment",
+      "operations management",
+      "process improvement"
+    ]
   },
   {
     "name": "Customer Success",
-    "description": "In a Customer Success role, they build and maintain strong client relationships by driving product adoption and satisfaction. They monitor usage metrics, coordinate onboarding, and address escalations to ensure long-term retention and account growth."
+    "description": "In a Customer Success role, they build and maintain strong client relationships by driving product adoption and satisfaction. They monitor usage metrics, coordinate onboarding, and address escalations to ensure long-term retention and account growth.",
+    "keywords": [
+      "client relationships",
+      "product adoption",
+      "customer satisfaction",
+      "usage metrics",
+      "onboarding",
+      "escalation management",
+      "customer retention",
+      "account growth",
+      "relationship management",
+      "customer loyalty"
+    ]
   },
   {
     "name": "Customer Support",
-    "description": "In a Customer Support role, they handle customer inquiries, technical troubleshooting, and issue resolution. They provide guidance on product usage, collaborate with internal teams to escalate complex problems, and ensure timely communication with end users."
+    "description": "In a Customer Support role, they handle customer inquiries, technical troubleshooting, and issue resolution. They provide guidance on product usage, collaborate with internal teams to escalate complex problems, and ensure timely communication with end users.",
+    "keywords": [
+      "customer inquiries",
+      "technical troubleshooting",
+      "issue resolution",
+      "product guidance",
+      "internal collaboration",
+      "problem escalation",
+      "customer communication",
+      "technical support",
+      "help desk",
+      "technical assistance"
+    ]
   },
   {
     "name": "Data Science",
-    "description": "In a Data Science role, they collect, clean, and analyze large datasets to uncover trends and inform business strategy. They develop predictive models, statistical analyses, and machine learning solutions for data-driven decision-making."
+    "description": "In a Data Science role, they collect, clean, and analyze large datasets to uncover trends and inform business strategy. They develop predictive models, statistical analyses, and machine learning solutions for data-driven decision-making.",
+    "keywords": [
+      "data collection",
+      "data cleaning",
+      "data analysis",
+      "business strategy",
+      "predictive modeling",
+      "statistical analysis",
+      "machine learning",
+      "data-driven decision making",
+      "predictive analytics",
+      "statistical modeling"
+    ]
   },
   {
     "name": "Defense Technology",
-    "description": "In a Defense Technology role, they research, design, and develop advanced military or defense solutions, including surveillance, autonomy, or reconnaissance systems. They integrate emerging technologies to enhance security, intelligence, and mission-critical capabilities."
+    "description": "In a Defense Technology role, they research, design, and develop advanced military or defense solutions, including surveillance, autonomy, or reconnaissance systems. They integrate emerging technologies to enhance security, intelligence, and mission-critical capabilities.",
+    "keywords": [
+      "military technology",
+      "defense solutions",
+      "surveillance systems",
+      "autonomous systems",
+      "reconnaissance",
+      "emerging technologies",
+      "intelligence systems",
+      "mission-critical development",
+      "security intelligence",
+      "countermeasure systems"
+    ]
   },
   {
     "name": "Finance",
-    "description": "In a Finance role, they manage financial planning, budgeting, and accounting operations. They oversee revenue recognition, regulatory compliance, and complex financial reporting while driving cost optimization and strategic investment decisions."
+    "description": "In a Finance role, they manage financial planning, budgeting, and accounting operations. They oversee revenue recognition, regulatory compliance, and complex financial reporting while driving cost optimization and strategic investment decisions.",
+    "keywords": [
+      "financial planning",
+      "budgeting",
+      "accounting operations",
+      "revenue recognition",
+      "regulatory compliance",
+      "financial reporting",
+      "cost optimization",
+      "strategic investment",
+      "financial management",
+      "financial analysis"
+    ]
   },
   {
     "name": "Hardware Engineering",
-    "description": "In a Hardware Engineering role, they design, prototype, and test physical technology products, electronic circuits, and embedded systems. They collaborate with cross-functional teams to optimize performance, reliability, and manufacturability of hardware solutions."
+    "description": "In a Hardware Engineering role, they design, prototype, and test physical technology products, electronic circuits, and embedded systems. They collaborate with cross-functional teams to optimize performance, reliability, and manufacturability of hardware solutions.",
+    "keywords": [
+      "hardware design",
+      "prototyping",
+      "product testing",
+      "electronic circuits",
+      "embedded systems",
+      "cross-functional collaboration",
+      "reliability engineering",
+      "manufacturability",
+      "component design",
+      "circuit testing"
+    ]
   },
   {
     "name": "Human Resources",
-    "description": "In a Human Resources role, they oversee talent acquisition, employee relations, benefits, and workplace policies. They foster a positive work environment through performance management, professional development, and compliance with labor regulations."
+    "description": "In a Human Resources role, they oversee talent acquisition, employee relations, benefits, and workplace policies. They foster a positive work environment through performance management, professional development, and compliance with labor regulations.",
+    "keywords": [
+      "talent acquisition",
+      "employee relations",
+      "workplace policies",
+      "work environment",
+      "performance management",
+      "professional development",
+      "labor compliance",
+      "HR management",
+      "employee engagement",
+      "conflict resolution"
+    ]
   },
   {
     "name": "Implementation",
-    "description": "In an Implementation role, they plan and execute customer onboarding and solution deployment. They coordinate cross-functional resources, manage timelines, and ensure alignment with client requirements for successful product integration."
+    "description": "In an Implementation role, they plan and execute customer onboarding and solution deployment. They coordinate cross-functional resources, manage timelines, and ensure alignment with client requirements for successful product integration.",
+    "keywords": [
+      "customer onboarding",
+      "solution deployment",
+      "cross-functional coordination",
+      "client requirements",
+      "implementation planning",
+      "project execution",
+      "client alignment",
+      "deployment strategy",
+      "client rollout",
+      "post-launch support"
+    ]
   },
   {
     "name": "IT & InfoSec",
-    "description": "In an IT & InfoSec role, they maintain IT infrastructure, network security, and technical support services. They implement information security standards, monitor system performance, and protect sensitive data against unauthorized access."
+    "description": "In an IT & InfoSec role, they maintain IT infrastructure, network security, and technical support services. They implement information security standards, monitor system performance, and protect sensitive data against unauthorized access.",
+    "keywords": [
+      "IT infrastructure",
+      "network security",
+      "information security",
+      "system performance",
+      "data protection",
+      "cybersecurity",
+      "security standards",
+      "vulnerability assessment",
+      "system administration"
+    ]
   },
   {
     "name": "Legal",
-    "description": "In a Legal role, they advise on legal strategies, draft contracts, and ensure regulatory and policy compliance. They manage dispute resolution, intellectual property rights, and risk mitigation to protect company interests."
+    "description": "In a Legal role, they advise on legal strategies, draft contracts, and ensure regulatory and policy compliance. They manage dispute resolution, intellectual property rights, and risk mitigation to protect company interests.",
+    "keywords": [
+      "legal strategy",
+      "contract drafting",
+      "regulatory compliance",
+      "policy compliance",
+      "dispute resolution",
+      "intellectual property",
+      "risk mitigation",
+      "legal advising",
+      "risk assessment"
+    ]
   },
   {
     "name": "Marketing",
-    "description": "In a Marketing role, they develop and execute marketing strategies, brand initiatives, and promotional campaigns. They conduct market research, manage content creation, and oversee digital channels to drive customer awareness and engagement."
+    "description": "In a Marketing role, they develop and execute marketing strategies, brand initiatives, and promotional campaigns. They conduct market research, manage content creation, and oversee digital channels to drive customer awareness and engagement.",
+    "keywords": [
+      "marketing strategy",
+      "brand initiatives",
+      "market research",
+      "content creation",
+      "digital marketing",
+      "customer awareness",
+      "customer engagement",
+      "campaign management",
+      "go-to-market strategy",
+      "SEO management"
+    ]
   },
   {
     "name": "Product Design",
-    "description": "In a Product Design role, they create user-centric interfaces, experiences, and visual identities. They conduct user research, prototype design concepts, and collaborate with engineering to deliver intuitive, aesthetically aligned products."
+    "description": "In a Product Design role, they create user-centric interfaces, experiences, and visual identities. They conduct user research, prototype design concepts, and collaborate with engineering to deliver intuitive, aesthetically aligned products.",
+    "keywords": [
+      "user-centric design",
+      "interface design",
+      "user experience",
+      "visual identity",
+      "prototype design",
+      "intuitive products",
+      "aesthetic design",
+      "product aesthetics",
+      "wireframing",
+      "design systems"
+    ]
   },
   {
     "name": "Product Management",
-    "description": "In a Product Management role, they define product vision, roadmap, and feature requirements based on market analysis and user feedback. They collaborate with stakeholders to prioritize development, ensure timely releases, and optimize product-market fit."
+    "description": "In a Product Management role, they define product vision, roadmap, and feature requirements based on market analysis and user feedback. They collaborate with stakeholders to prioritize development, ensure timely releases, and optimize product-market fit.",
+    "keywords": [
+      "product vision",
+      "product roadmap",
+      "feature requirements",
+      "user feedback",
+      "stakeholder collaboration",
+      "development prioritization",
+      "product-market fit",
+      "product strategy",
+      "user research",
+      "product backlog"
+    ]
   },
   {
     "name": "Program Management",
-    "description": "In a Program Management role, they lead multiple, interrelated projects or initiatives. They set program objectives, manage stakeholders, and align resources to strategic goals, ensuring cohesive execution and delivery across workstreams."
+    "description": "In a Program Management role, they lead multiple, interrelated projects or initiatives. They set program objectives, manage stakeholders, and align resources to strategic goals, ensuring cohesive execution and delivery across workstreams.",
+    "keywords": [
+      "program objectives",
+      "project leadership",
+      "stakeholder management",
+      "resource alignment",
+      "strategic goals",
+      "cohesive execution",
+      "workstream coordination",
+      "initiative management",
+      "portfolio management",
+      "milestone tracking"
+    ]
   },
   {
     "name": "Project Management",
-    "description": "In a Project Management role, they plan and coordinate individual projects from inception to completion. They oversee timelines, resources, risk mitigation, and stakeholder communication to deliver on defined scope and objectives."
+    "description": "In a Project Management role, they plan and coordinate individual projects from inception to completion. They oversee timelines, resources, risk mitigation, and stakeholder communication to deliver on defined scope and objectives.",
+    "keywords": [
+      "project planning",
+      "project coordination",
+      "project execution",
+      "timeline management",
+      "risk mitigation",
+      "stakeholder communication",
+      "scope management",
+      "project objectives",
+      "Agile methodology",
+      "Waterfall methodology"
+    ]
   },
   {
     "name": "Sales",
-    "description": "In a Sales role, they develop and execute sales strategies to drive revenue and client acquisition. They manage prospect pipelines, negotiate contracts, and collaborate with cross-functional teams to meet or exceed sales targets."
+    "description": "In a Sales role, they develop and execute sales strategies to drive revenue and client acquisition. They manage prospect pipelines, negotiate contracts, and collaborate with cross-functional teams to meet or exceed sales targets.",
+    "keywords": [
+      "sales strategy",
+      "revenue growth",
+      "client acquisition",
+      "prospect pipeline",
+      "contract negotiation",
+      "cross-functional collaboration",
+      "sales targets",
+      "business development",
+      "lead generation",
+      "sales pipeline"
+    ]
   },
   {
     "name": "Software Engineering",
-    "description": "In a Software Engineering role, they architect and implement software solutions, applications, and systems. They write and review code, collaborate with cross-functional teams, and ensure maintainability, scalability, and performance."
+    "description": "In a Software Engineering role, they architect and implement software solutions, applications, and systems. They write and review code, collaborate with cross-functional teams, and ensure maintainability, scalability, and performance.",
+    "keywords": [
+      "software architecture",
+      "application development",
+      "code writing",
+      "code review",
+      "cross-functional collaboration",
+      "maintainability",
+      "scalability",
+      "software performance",
+      "software solutions",
+      "Java",
+      "Python",
+      "C++",
+      "JavaScript",
+      "Git",
+      "Docker",
+      "Kubernetes",
+      "AWS",
+      "Azure",
+      "CI/CD",
+      "React",
+      "Node.js",
+      "SQL",
+      "REST APIs",
+      "DevOps",
+      "Microservices",
+      "TypeScript",
+      "Ruby on Rails",
+      "software craftsmanship",
+      "test-driven development"
+    ]
   },
   {
     "name": "Technical Program Management",
-    "description": "In a Technical Program Management role, they coordinate complex engineering efforts and product launches. They align technical and business requirements, manage cross-functional resources, and drive on-time delivery of high-impact technical programs."
+    "description": "In a Technical Program Management role, they coordinate complex engineering efforts and product launches. They align technical and business requirements, manage cross-functional resources, and drive on-time delivery of high-impact technical programs.",
+    "keywords": [
+      "technical coordination",
+      "engineering efforts",
+      "product launches",
+      "on-time delivery",
+      "high-impact programs",
+      "program management",
+      "technical project management",
+      "technical leadership",
+      "risk tracking"
+    ]
   }
 ]
