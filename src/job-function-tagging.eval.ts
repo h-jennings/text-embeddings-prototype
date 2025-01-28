@@ -1,5 +1,5 @@
 import { createScorer, evalite } from "evalite";
-import { data } from "./data/job-summary-test-data.js";
+import data from "./data/job-test-data.json" assert { type: "json" };
 import { createJobSummary } from "./processors/create-job-summary/create-job-summary.js";
 import { createEmbedding } from "./utils/create-embedding.js";
 import { getTags } from "./utils/get-tags.js";

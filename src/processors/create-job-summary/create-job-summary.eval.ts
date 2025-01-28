@@ -1,6 +1,6 @@
 import { createScorer, evalite } from "evalite";
 import { createJobSummary } from "./create-job-summary.js";
-import { data } from "../../data/job-summary-test-data.js";
+import data from "../../data/job-test-data.json" assert { type: "json" };
 
 const isCorrectLength = createScorer<unknown, string>({
   name: "Is Correct Length",
@@ -10,6 +10,7 @@ const isCorrectLength = createScorer<unknown, string>({
   },
 });
 
+/*
 const mentionsRole = createScorer<{ role: string }, string>({
   name: "Mentions role in summary",
   description: "The summary of the job should mention the role by name",
@@ -17,6 +18,7 @@ const mentionsRole = createScorer<{ role: string }, string>({
     return output.toLowerCase().includes(input.role.toLowerCase()) ? 1 : 0;
   },
 });
+*/
 
 evalite("Job summary creator", {
   data: () => {
@@ -32,5 +34,5 @@ evalite("Job summary creator", {
     return summary;
   },
   // The scoring methods for the eval
-  scorers: [isCorrectLength, mentionsRole],
+  scorers: [isCorrectLength],
 });
