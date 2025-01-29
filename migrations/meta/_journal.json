@@ -106,6 +106,13 @@
       "when": 1737819131983,
       "tag": "0015_unique-constraint-to-job_summaries-table",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1738177639896,
+      "tag": "0016_adding-segments-table",
+      "breakpoints": true
     }
   ]
 }

@@ -70,6 +70,7 @@ export const tags = s.sqliteTable("tags", {
 
 export const tagsRelations = relations(tags, ({ many }) => ({
   tags_to_jobs: many(tagsToJobs),
+  segments: many(segments),
 }));
 
 export const jobs = s.sqliteTable(
@@ -193,5 +194,50 @@ export const tagsToJobsRelations = relations(tagsToJobs, ({ one }) => ({
     fields: [tagsToJobs.job_id],
     references: [jobs.id],
     relationName: "job",
+  }),
+}));
+
+/**
+ * Segements are relative to `tags`
+ *
+ * - `tags` can have many `segements`
+ * - `segment` can have only one `tag`
+ *
+ * Exampe: "Software Engineering" tag could have the following segments:
+ *
+ * 1. Frontend
+ * 2. Backend
+ * 3. Full-stack
+ */
+export const segments = s.sqliteTable("segments", {
+  id: s.integer().primaryKey().notNull(),
+  created_at: s
+    .text("created_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`),
+  updated_at: s
+    .text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  name: s.text().notNull().unique(),
+  description: s.text().notNull(),
+  vector: s
+    .text({ mode: "json" })
+    .$type<Array<number>>()
+    .default(sql`'[]'`),
+  tag_id: s
+    .integer()
+    .notNull()
+    .references(() => tags.id, {
+      onDelete: "cascade",
+    }),
+});
+
+export const segmentRelations = relations(segments, ({ one }) => ({
+  tag: one(tags, {
+    fields: [segments.tag_id],
+    references: [tags.id],
+    relationName: "tag",
   }),
 }));
