@@ -234,6 +234,8 @@ export const segments = s.sqliteTable("segments", {
     }),
 });
 
+export type NewSegment = typeof segments.$inferInsert;
+
 export const segmentRelations = relations(segments, ({ one }) => ({
   tag: one(tags, {
     fields: [segments.tag_id],
