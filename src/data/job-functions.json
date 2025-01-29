@@ -319,6 +319,43 @@
       "Ruby on Rails",
       "software craftsmanship",
       "test-driven development"
+    ],
+    "segments": [
+      {
+        "name": "Security Engineering",
+        "description": "Designs and implements security measures to protect systems, networks, and data. Focuses on threat detection, vulnerability assessment, security architecture, and incident response.",
+        "keywords": ["Cybersecurity", "Threat Detection", "Vulnerability Assessment"]
+      },
+      {
+        "name": "Frontend Engineering",
+        "description": "Develops user interfaces and client-side applications using HTML, CSS, JavaScript, and modern frameworks. Ensures responsive design, optimal user experience, and seamless interactions.",
+        "keywords": ["React", "UI/UX", "Responsive Design", "Vue", "Angular"]
+      },
+      {
+        "name": "Backend Engineering",
+        "description": "Creates server-side logic, APIs, and databases that power applications. Works with server technologies, databases, and architectures to ensure scalable and efficient data processing.",
+        "keywords": ["Node.js", "API Development", "Database Management"]
+      },
+      {
+        "name": "Full Stack Engineering",
+        "description": "Handles both client and server-side development, combining frontend and backend expertise. Builds complete web applications from database to user interface.",
+        "keywords": ["Full Stack", "Web Development", "RESTful APIs"]
+      },
+      {
+        "name": "Infrastructure Engineering",
+        "description": "Designs, builds, and maintains cloud and on-premise infrastructure. Focuses on deployment automation, scalability, reliability, and DevOps practices.",
+        "keywords": ["Cloud Computing", "DevOps", "CI/CD"]
+      },
+      {
+        "name": "Data Engineering",
+        "description": "Creates and maintains data pipelines, warehouses, and processing systems. Ensures efficient data collection, storage, processing, and accessibility for analytics and machine learning.",
+        "keywords": ["ETL", "Data Warehousing", "Big Data"]
+      },
+      {
+        "name": "QA Engineering",
+        "description": "Develops and executes test strategies, automated testing frameworks, and quality processes. Ensures software reliability through systematic testing and quality assurance methodologies.",
+        "keywords": ["Automated Testing", "Test Automation", "Quality Assurance"]
+      }
     ]
   },
   {
