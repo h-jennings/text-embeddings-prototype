@@ -100,6 +100,7 @@ export const jobs = s.sqliteTable(
 );
 export const jobsRelations = relations(jobs, ({ many, one }) => ({
   tags_to_jobs: many(tagsToJobs),
+  segments_to_jobs: many(segmentsToJobs),
   company: one(companies, {
     fields: [jobs.company_id],
     references: [companies.id],
@@ -236,10 +237,39 @@ export const segments = s.sqliteTable("segments", {
 
 export type NewSegment = typeof segments.$inferInsert;
 
-export const segmentRelations = relations(segments, ({ one }) => ({
+export const segmentRelations = relations(segments, ({ one, many }) => ({
+  segments_to_jobs: many(segmentsToJobs),
   tag: one(tags, {
     fields: [segments.tag_id],
     references: [tags.id],
     relationName: "tag",
+  }),
+}));
+
+export const segmentsToJobs = s.sqliteTable(
+  "segments_to_jobs",
+  {
+    segment_id: s.integer("segment_id").references(() => segments.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+    job_id: s.integer("job_id").references(() => jobs.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+  },
+  (table) => [s.primaryKey({ columns: [table.segment_id, table.job_id] })],
+);
+
+export const segmentsToJobsRelations = relations(segmentsToJobs, ({ one }) => ({
+  segment: one(segments, {
+    fields: [segmentsToJobs.segment_id],
+    references: [segments.id],
+    relationName: "segment",
+  }),
+  job: one(jobs, {
+    fields: [segmentsToJobs.job_id],
+    references: [jobs.id],
+    relationName: "job",
   }),
 }));
